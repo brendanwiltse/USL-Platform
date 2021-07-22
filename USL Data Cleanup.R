@@ -159,7 +159,18 @@ usl_met_avg$dew <- humidity.to.dewpoint(usl_met_avg$hum, usl_met_avg$temp, tempe
 usl_met_avg$windchill <- 13.12 + 0.6215 * usl_met_avg$temp - 11.37*((usl_wind$wspeed*3.6)^0.16) + 0.3965 * (((usl_wind$wspeed*3.6)^0.16))
 usl_met_avg$heatindex <- heat.index(usl_met_avg$temp, rh = usl_met_avg$hum, temperature.metric = "celsius", output.metric = "celsius", round = 3)
 
+#Save dataframes as csv files
+write.csv(usl, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl.csv", row.names = FALSE)
+write.csv(usl_met_avg, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl_met_avg.csv", row.names = FALSE)
+write.csv(usl_rain, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl_rain.csv", row.names = FALSE)
+write.csv(usl_surf, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl_surf.csv", row.names = FALSE)
+write.csv(usl_wind, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl_wind.csv", row.names = FALSE)
+write.csv(usl_windmax, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl_windmax.csv", row.names = FALSE)
+
 #Update data files with sonde correction. This will apply and cumulative correction which should be assessed in later versions.
+
+usl.clean <- read_csv("https://dl.dropboxusercontent.com/s/mylhy2np4o8amrx/usl.csv?dl=0") #update USL to cleaned data 
+
 usl.before <- filter(usl, as_datetime(date.time)<=as_datetime(last(usl_sonde_swap$date.time)))
 usl.profile.before <- filter(usl.before, date.time == max(usl.before$date.time))
 
@@ -176,22 +187,22 @@ temp.test <- t.test(usl.profile.before$temp, usl.profile.after$temp)
 cond.data <- data.frame('Before' = usl.profile.before$cond, 'After' = usl.profile.after$cond)
 cond.fit <- glm(Before~After, data = cond.data)
 cond.test <- t.test(usl.profile.before$cond, usl.profile.after$cond)
-usl$cond[as_datetime(usl$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(cond.fit, newdata = data.frame("After" = usl.after$cond))
+usl.clean$cond[as_datetime(usl.clean$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(cond.fit, newdata = data.frame("After" = usl.after$cond))
 
 ODO.percent.data <- data.frame('Before' = usl.profile.before$ODO.percent, 'After' = usl.profile.after$ODO.percent)
 ODO.percent.fit <- glm(Before~After, data = ODO.percent.data)
 ODO.percent.test <- t.test(usl.profile.before$ODO.percent, usl.profile.after$ODO.percent)
-usl$ODO.percent[as_datetime(usl$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(ODO.percent.fit, newdata = data.frame("After" = usl.after$ODO.percent))
+usl.clean$ODO.percent[as_datetime(usl.clean$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(ODO.percent.fit, newdata = data.frame("After" = usl.after$ODO.percent))
 
 ODO.data <- data.frame('Before' = usl.profile.before$ODO, 'After' = usl.profile.after$ODO)
 ODO.fit <- glm(Before~After, data = ODO.data)
 ODO.test <- t.test(usl.profile.before$ODO, usl.profile.after$ODO)
-usl$ODO[as_datetime(usl$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(ODO.fit, newdata = data.frame("After" = usl.after$ODO))
+usl.clean$ODO[as_datetime(usl.clean$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(ODO.fit, newdata = data.frame("After" = usl.after$ODO))
 
 pH.data <- data.frame('Before' = usl.profile.before$pH, 'After' = usl.profile.after$pH)
 pH.fit <- glm(Before~After, data = pH.data)
 pH.test <- t.test(usl.profile.before$pH, usl.profile.after$pH)
-usl$pH[as_datetime(usl$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(pH.fit, newdata = data.frame("After" = usl.after$pH))
+usl.clean$pH[as_datetime(usl.clean$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(pH.fit, newdata = data.frame("After" = usl.after$pH))
 
 pH.mV.fit <- glm(usl.profile.before$pH.mV~usl.profile.after$pH.mV)
 pH.mV.test <- t.test(usl.profile.before$pH.mV, usl.profile.after$pH.mV)
@@ -199,12 +210,12 @@ pH.mV.test <- t.test(usl.profile.before$pH.mV, usl.profile.after$pH.mV)
 turbidity.data <- data.frame('Before' = usl.profile.before$turbidity, 'After' = usl.profile.after$turbidity)
 turbidity.fit <- glm(Before~After, data = turbidity.data)
 turbidity.test <- t.test(usl.profile.before$turbidity, usl.profile.after$turbidity)
-usl$turbidity[as_datetime(usl$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(turbidity.fit, newdata = data.frame("After" = usl.after$turbidity))
+usl.clean$turbidity[as_datetime(usl.clean$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(turbidity.fit, newdata = data.frame("After" = usl.after$turbidity))
 
 bga.pc.rfu.data <- data.frame('Before' = usl.profile.before$bga.pc.rfu, 'After' = usl.profile.after$bga.pc.rfu)
 bga.pc.rfu.fit <- glm(Before~After, data = bga.pc.rfu.data)
 bga.pc.rfu.test <- t.test(usl.profile.before$bga.pc.rfu, usl.profile.after$bga.pc.rfu)
-usl$bga.pc.rfu[as_datetime(usl$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(bga.pc.rfu.fit, newdata = data.frame("After" = usl.after$bga.pc.rfu))
+usl.clean$bga.pc.rfu[as_datetime(usl.clean$date.time) >= as_datetime(last(usl_sonde_swap$date.time))] = predict(bga.pc.rfu.fit, newdata = data.frame("After" = usl.after$bga.pc.rfu))
 
 bga.pc.ugl.fit <- glm(usl.profile.before$bga.pc.ugl~usl.profile.after$bga.pc.ugl)
 bga.pc.ugl.test <- t.test(usl.profile.before$bga.pc.ugl, usl.profile.after$bga.pc.ugl)
@@ -213,12 +224,4 @@ chl.rfu.test <- t.test(usl.profile.before$chl.rfu, usl.profile.after$chl.rfu)
 chl.ugl.fit <- glm(usl.profile.before$chl.ugl~usl.profile.after$chl.ugl)
 chl.ugl.test <- t.test(usl.profile.before$chl.ugl, usl.profile.after$chl.ugl)
 
-
-
-#Save dataframes as csv files
-write.csv(usl, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl.csv", row.names = FALSE)
-write.csv(usl_met_avg, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl_met_avg.csv", row.names = FALSE)
-write.csv(usl_rain, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl_rain.csv", row.names = FALSE)
-write.csv(usl_surf, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl_surf.csv", row.names = FALSE)
-write.csv(usl_wind, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl_wind.csv", row.names = FALSE)
-write.csv(usl_windmax, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl_windmax.csv", row.names = FALSE)
+write.csv(usl.clean, "/Users/brendanwiltse/Dropbox (ADK Watershed)/ADK Watershed Team Folder/Env Research Lab/USL_Profiler_Data/Web_Files/Cleaned Data/usl.csv", row.names = FALSE)
