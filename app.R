@@ -162,7 +162,7 @@ ui <- dashboardPage(
                     dateRangeInput(
                       "dateRange",
                       label = "Select Date Range",
-                      start = "2021-04-13 16:23:18", 
+                      start = "2022-04-16 00:00:00", 
                       end = Sys.Date()+1
                     )
                   ),
@@ -429,7 +429,7 @@ server <- function(input, output) {
     ggplot(usl_sub.heatmap(), aes(x = as_datetime(date.time), y = depth)) +
       geom_contour_fill(aes_string(z = input$parameter), 
                         bins = filter(usl_names, parameter == input$parameter)$bin) +
-      scale_y_reverse(expand = expansion(mult = c(0,0)), limits =c(26,0)) +
+      scale_y_reverse(expand = expansion(mult = c(0,0)), limits =c(25,0)) +
       scale_x_datetime(expand = expansion(mult = c(0,0))) +
       scale_fill_viridis(option = "viridis",
                          guide = guide_colorbar(direction = "horizontal", 
@@ -741,7 +741,7 @@ server <- function(input, output) {
   
   output$uslphoto <- renderUI({
     tags$img(
-      src = "https://dl.dropboxusercontent.com/s/zop6ibei2fm7mzl/USL%20Profiler%20Camera.jpg?dl=0", 
+      src = "https://dl.dropbox.com/s/cv9awr9gw4aqy29/USL%20Profiler%20Camera.JPG?dl=0", 
       alt = "USL Camera Photo",
       width = "96%",
       style = "vertical-align:middle;horizontal-align:middle;margin:15px 15px 15px 15px")
